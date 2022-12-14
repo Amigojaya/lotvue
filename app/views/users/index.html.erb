@@ -1,0 +1,55 @@
+<p id="notice"><%= notice %></p>
+
+
+<div class="container">
+  <div class="row align-items-start">
+    <div class="col">
+      <h1>Users</h1>
+    </div>
+    <div class="col">
+      <%= form_for :role, url: users_path, method: :get do |f|%>
+        <%= f.select "role", options_from_collection_for_select(User.select(:id,:role).all, :role, :role,@role_word),{}, {:class=>'form-select', onchange: "$(this).parent('form').submit();"}  %>
+      <%end%>
+      
+    </div>
+  </div>
+</div>
+<b><%= "Selected -> " + @role_word.upcase if @role_word != "Select Role"%></b>
+<table id="usersTable" class="table table-hover">
+  <thead>
+    <tr>
+      <th>First name</th>
+      <th>Last name</th>
+      <th>Role</th>
+      <th>Image</th>
+      <th ></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @users.each do |user| %>
+      <tr>
+        <td><%= user.first_name %></td>
+        <td><%= user.last_name %></td>
+        <td><%= user.role %></td>
+        <% if user.image.attached? %>
+        <td><%=  image_tag(url_for(user.image),style: 'height:50px; width:50px;') %></td>
+        <%else%>
+        <td>No Image</td>
+        <%end%>
+        <td><%= link_to 'Show', user, class:"btn btn-warning" %> | <%= link_to 'Edit', edit_user_path(user), class:"btn btn-primary" %> | <%= link_to 'Destroy', user, method: :delete, data: { confirm: 'Are you sure?' }, class:"btn btn-danger" %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<%= paginate @users, left: 1, right: 3 %>
+<br>
+
+<%= link_to 'Create User', new_user_path, class:"btn btn-success" %>
+
+<script >
+  $(document).ready(function() {
+    var uTable = $("#usersTable").DataTable({"lengthChange": false,"bPaginate": false,"bInfo": false,"searching": false})
+  })
+
+</script>
